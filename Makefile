@@ -1,6 +1,6 @@
 NAME = philo
 
-SRCS = philo.c
+SRCS = philo.c utils.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -13,10 +13,12 @@ RM = rm -f
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -I. -fsanitize=address
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -I.
+#-fsanitize=address
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o) -I. -fsanitize=address -static-libsan
+	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o) -I.
+#-fsanitize=address -static-libsan
 
 clean:
 	$(RM) $(OBJS)
