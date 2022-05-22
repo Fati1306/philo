@@ -19,7 +19,6 @@ void    print_lock(t_philo *philo, char *status, int id)
     elapsed_time = get_time() - philo->o->t0;
     pthread_mutex_lock(&philo->o->print);
     printf("%ldms %d %s\n", elapsed_time, id, status);
-//    if (ft_strncmp(status, "died", 5) != 0)
 	if (philo->o->dead == 0)
         pthread_mutex_unlock(&philo->o->print);
 }
@@ -57,34 +56,6 @@ void    *philo_thread(void *args)
         print_lock(philo, "is thinking", philo->id + 1);
     }
     return (args);
-}
-
-int init_ops(t_ops *o, int ac, char **av)
-{
-    int i;
-
-    i = -1;
-    o->nb_ph = ft_atoi(av[1]);
-    o->die = ft_atoi(av[2]);
-    o->eat = ft_atoi(av[3]);
-    o->sleep = ft_atoi(av[4]);
-    o->nb_eat = -1;
-    o->forks = NULL;
-    if (pthread_mutex_init(&o->print, NULL) != 0)
-        return (-1);
-    o->forks = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
-    o->t0 = get_time();
-    o->dead = 0;
-    if (ac == 6)
-    {
-        o->nb_eat = ft_atoi(av[5]);
-        o->meals = (int *) malloc(sizeof(int) * o->nb_ph);
-		while (++i < o->nb_ph)
-			o->meals[i] = o->nb_eat;
-	}
-	if (o->forks == NULL || o->meals == NULL)
-        return (-1);
-    return (0);
 }
 
 void    *supervisor_thread(void *args)

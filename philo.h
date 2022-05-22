@@ -20,32 +20,32 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-int	        ft_atoi(const char *str);
-int         check_if_num(int ac, char **args);
-int	        ft_strncmp(const char *s1, const char *s2, int n);
-long int    get_time(void);
-void        ft_usleep(long int goal);
-
 typedef struct  s_ops
 {
-    int             nb_ph;
-    int             die;
-    int             eat;
-    int             sleep;
-    int             nb_eat;
-    pthread_mutex_t print;
-    pthread_mutex_t *forks;
-    long int        t0;
-    int             dead;
-    int             *meals;
+	int             nb_ph;
+	int             die;
+	int             eat;
+	int             sleep;
+	int             nb_eat;
+	pthread_mutex_t print;
+	pthread_mutex_t *forks;
+	long int        t0;
+	int             dead;
+	int             *meals;
 }   t_ops;
 
 typedef struct s_philo
 {
-    int         id;
-    pthread_t   thread;
-    long int    last_meal;
-    t_ops       *o;
+	int         id;
+	pthread_t   thread;
+	long int    last_meal;
+	t_ops       *o;
 }   t_philo;
+
+int	        ft_atoi(const char *str);
+int         check_if_num(int ac, char **args);
+long int    get_time(void);
+void        ft_usleep(long int goal);
+int 		init_ops(t_ops *o, int ac, char **av);
 
 #endif

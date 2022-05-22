@@ -60,22 +60,6 @@ int check_if_num(int ac, char **args)
     return (0);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, int n)
-{
-    int			i;
-    unsigned char	*str1;
-    unsigned char	*str2;
-
-    i = 0;
-    str1 = (unsigned char *)s1;
-    str2 = (unsigned char *)s2;
-    if (n == 0)
-        return (0);
-    while (i < n - 1 && str1[i] && str2[i] && str1[i] == str2[i])
-        i++;
-    return (str1[i] - str2[i]);
-}
-
 long int    get_time(void)
 {
     struct timeval  t;
@@ -95,4 +79,32 @@ void    ft_usleep(long int goal)
     time = get_time() * 1000;
     while (get_time() * 1000 <= time + goal)
         usleep(100);
+}
+
+int init_ops(t_ops *o, int ac, char **av)
+{
+	int i;
+
+	i = -1;
+	o->nb_ph = ft_atoi(av[1]);
+	o->die = ft_atoi(av[2]);
+	o->eat = ft_atoi(av[3]);
+	o->sleep = ft_atoi(av[4]);
+	o->nb_eat = -1;
+	o->forks = NULL;
+	if (pthread_mutex_init(&o->print, NULL) != 0)
+		return (-1);
+	o->forks = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
+	o->t0 = get_time();
+	o->dead = 0;
+	if (ac == 6)
+	{
+		o->nb_eat = ft_atoi(av[5]);
+		o->meals = (int *) malloc(sizeof(int) * o->nb_ph);
+		while (++i < o->nb_ph)
+			o->meals[i] = o->nb_eat;
+	}
+	if (o->forks == NULL || o->meals == NULL)
+		return (-1);
+	return (0);
 }
