@@ -6,7 +6,7 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:25 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/09/01 12:42:34 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/03 12:17:40 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,14 @@ int	init_ops(t_ops *o, int ac, char **av)
 	if (o->nb_ph == -1 || o->die == -1 || o->eat == -1 || o->sleep == -1)
 		return (-1);
 	o->nb_eat = -1;
-	o->forks = NULL;
-	if (pthread_mutex_init(&o->print, NULL) != 0)
+	if (pthread_mutex_init(&o->print_m, NULL) != 0)
 		return (-1);
-	o->forks = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
+	o->forks_m = NULL;
+	o->forks_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
+	o->l_meal_m = NULL;
+	o->l_meal_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
+	o->meals_m = NULL;
+	o->meals_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_eat);
 	o->t0 = get_time();
 	o->dead = 0;
 	if (ac == 6)
@@ -89,7 +93,8 @@ int	init_ops(t_ops *o, int ac, char **av)
 		while (++i < o->nb_ph)
 			o->meals[i] = o->nb_eat;
 	}
-	if (o->forks == NULL || o->meals == NULL)
+	if (o->forks_m == NULL || o->meals == NULL || o->l_meal_m == NULL
+		|| o->meals_m == NULL)
 		return (-1);
 	return (0);
 }

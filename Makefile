@@ -13,12 +13,10 @@ RM = rm -f
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -I.
-#-fsanitize=address
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -I. -fsanitize=thread -g
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o) -I.
-#-fsanitize=address -static-libsan
+	$(CC) $(CFLAGS) -c $< -o $(<:.c=.o) -I. -fsanitize=thread -static-libsan -g
 
 clean:
 	$(RM) $(OBJS)

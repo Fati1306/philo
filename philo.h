@@ -6,7 +6,7 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:34 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/05/22 18:53:53 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/03 12:14:33 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ typedef struct s_ops
 	int				eat;
 	int				sleep;
 	int				nb_eat;
-	pthread_mutex_t	print;
-	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_m;
+	pthread_mutex_t	*forks_m;
+	pthread_mutex_t	*l_meal_m;
+	pthread_mutex_t	*meals_m;
 	long int		t0;
 	int				dead;
 	int				*meals;
