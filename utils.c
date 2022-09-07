@@ -6,7 +6,7 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:25 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/09/03 12:17:40 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/07 12:05:40 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ft_atoi(const char *str)
 	num = 0;
 	while (str[i])
 		num = (num * 10) + str[i++] - '0';
-	if (num > 9223372036854775807)
+	if (num > 2147483647)
 		return (-1);
 	return (num);
 }
@@ -80,21 +80,21 @@ int	init_ops(t_ops *o, int ac, char **av)
 	o->forks_m = NULL;
 	o->forks_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
 	o->l_meal_m = NULL;
-	o->l_meal_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);
+	o->l_meal_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_ph);	
 	o->meals_m = NULL;
-	o->meals_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_eat);
 	o->t0 = get_time();
 	o->dead = 0;
 	if (ac == 6)
 	{
-		o->meals = NULL;
 		o->nb_eat = ft_atoi(av[5]);
+		o->meals_m = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * o->nb_eat);
+		o->meals = NULL;
 		o->meals = (int *) malloc(sizeof(int) * o->nb_ph);
 		while (++i < o->nb_ph)
 			o->meals[i] = o->nb_eat;
 	}
 	if (o->forks_m == NULL || o->meals == NULL || o->l_meal_m == NULL
-		|| o->meals_m == NULL)
+		|| (o->nb_eat != -1 && o->meals_m == NULL))
 		return (-1);
 	return (0);
 }

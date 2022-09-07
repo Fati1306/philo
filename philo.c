@@ -6,7 +6,7 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:37 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/09/03 12:28:34 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/07 12:09:21 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ void	philo_eating(t_philo *philo, int s)
 	pthread_mutex_lock((&philo->o->forks_m[philo->id + s]));
 	print_lock(philo, "has taken 2nd fork", philo->id);
 	print_lock(philo, "is eating", philo->id);
-	printf("test \t %d\n", philo->o->meals[0]);
-	//mutex ?
+	// printf("test \t %d\n", philo->o->meals[0]);
+	pthread_mutex_lock(&philo->o->meals_m[philo->id]);
 	if (philo->o->nb_eat != -1)
 		philo->o->meals[philo->id]--;
+	pthread_mutex_unlock(&philo->o->meals_m[philo->id]);
 	// add last meal mutex here
 	pthread_mutex_lock(&philo->o->l_meal_m[philo->id]);
 	philo->last_meal = get_time();
@@ -131,6 +132,7 @@ int main(int ac, char *av[])
     if (check_if_num(ac, av) == -1 || ac < 5 || ac > 6
 		|| ft_atoi(av[1]) == 0 || init_ops(&o, ac, av) == -1)
     {
+		// write(1, "test\n", 5);
         printf("Error\n");
         return (1);
     }
@@ -150,8 +152,8 @@ int main(int ac, char *av[])
         philos[i].last_meal = o.t0;
         if (pthread_mutex_init(&o.forks_m[i], NULL) != 0
 			|| pthread_create(&philos->thread, NULL, philo_thread, &philos[i]) != 0
-			|| pthread_mutex_init(&o.l_meal_m[i], NULL) != 0
-			|| pthread_mutex_init(&o.meals_m[i], NULL) != 0)
+			|| pthread_mutex_init(&o.l_meal_m[i], NULL) != 0)
+			// || pthread_mutex_init(&o.meals_m[i], NULL) != 0)
 		{
 			 printf("Error\n");
         	return (1);
