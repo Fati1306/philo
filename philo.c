@@ -6,11 +6,16 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:37 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/09/07 12:09:21 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/08 12:38:56 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // need to add error checking for usleep & gettimeofday
+// add error checking for mutex lock/unlock
+// what happens if min num of meals is 0?
+// segfault when there's 2 min meals?? everything else works??
+// find where deadlock is
+// sometimes it prints 1 sentence after died and the time is scrambled
 
 #include "philo.h"
 
@@ -19,11 +24,14 @@ void	print_lock(t_philo *philo, char *status, int id)
 	long int	elapsed_time;
 
 	elapsed_time = get_time() - philo->o->t0;
+	pthread_mutex_lock(&philo->o->dead_m);
 	pthread_mutex_lock(&philo->o->print_m);
+	if (philo->o->dead == 1)
+		usleep(100);
 	printf("%ldms %d %s\n", elapsed_time, id + 1, status);
-	// add mutex for dead here
 	if (philo->o->dead == 0)
 		pthread_mutex_unlock(&philo->o->print_m);
+	pthread_mutex_unlock(&philo->o->dead_m);
 }
 
 void	philo_eating(t_philo *philo, int s)
@@ -33,11 +41,14 @@ void	philo_eating(t_philo *philo, int s)
 	pthread_mutex_lock((&philo->o->forks_m[philo->id + s]));
 	print_lock(philo, "has taken 2nd fork", philo->id);
 	print_lock(philo, "is eating", philo->id);
-	// printf("test \t %d\n", philo->o->meals[0]);
-	pthread_mutex_lock(&philo->o->meals_m[philo->id]);
+	// printf("test\t id: %d\n", philo->id);
 	if (philo->o->nb_eat != -1)
-		philo->o->meals[philo->id]--;
-	pthread_mutex_unlock(&philo->o->meals_m[philo->id]);
+	{
+		pthread_mutex_lock(&philo->o->meals_m[philo->id]);
+		if (philo->o->nb_eat != -1)
+			philo->o->meals[philo->id]--;
+		pthread_mutex_unlock(&philo->o->meals_m[philo->id]);
+	}
 	// add last meal mutex here
 	pthread_mutex_lock(&philo->o->l_meal_m[philo->id]);
 	philo->last_meal = get_time();
@@ -111,9 +122,12 @@ void	*supervisor_thread(void *args)
 			if (current_time - philos[i].last_meal > philos[0].o->die)
 			{
 				pthread_mutex_unlock(&philos[0].o->l_meal_m[i]);
-				// add dead mutex here
+				pthread_mutex_lock(&philos[0].o->dead_m);
 				philos->o->dead = 1;
+				pthread_mutex_unlock(&philos[0].o->dead_m);
 				print_lock(&philos[i], "died", i);
+			// fflush(stdout);
+			// printf("\tsupervisor\n");
 				return (args);
 			}
 			pthread_mutex_unlock(&philos[0].o->l_meal_m[i]);
@@ -152,8 +166,9 @@ int main(int ac, char *av[])
         philos[i].last_meal = o.t0;
         if (pthread_mutex_init(&o.forks_m[i], NULL) != 0
 			|| pthread_create(&philos->thread, NULL, philo_thread, &philos[i]) != 0
-			|| pthread_mutex_init(&o.l_meal_m[i], NULL) != 0)
-			// || pthread_mutex_init(&o.meals_m[i], NULL) != 0)
+			|| pthread_mutex_init(&o.l_meal_m[i], NULL) != 0
+			|| (philos[0].o->nb_eat != -1 && pthread_mutex_init(&o.meals_m[i], NULL) != 0)
+			|| pthread_mutex_init(&philos->o->dead_m, NULL) != 0)
 		{
 			 printf("Error\n");
         	return (1);

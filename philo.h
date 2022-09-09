@@ -6,7 +6,7 @@
 /*   By: fel-maac <fel-maac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/22 14:59:34 by fel-maac          #+#    #+#             */
-/*   Updated: 2022/09/07 11:56:05 by fel-maac         ###   ########.fr       */
+/*   Updated: 2022/09/07 12:42:51 by fel-maac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_ops
 	pthread_mutex_t	*forks_m;
 	pthread_mutex_t	*l_meal_m;
 	pthread_mutex_t	*meals_m;
+	pthread_mutex_t	dead_m;
 	long int		t0;
 	int				dead;
 	int				*meals;
